@@ -1,25 +1,56 @@
-
 import wget
 import os
+import time
 from pynput.keyboard import Key, Controller
+import shutil
+import patoolib
 
 
-def launchServer():
-    os.startfile('cmd')
-    time.sleep(2)
-    for char in str(launch_java):
+def minecraft_servercommand(command):
+    for char in str(command):
         keyboard.press(char)
         keyboard.release(char)
         time.sleep(0.02)
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
 
+
+
+def launchServer():
+    os.startfile('cmd')
+    time.sleep(2)
+    for char in str(cd):
+        keyboard.press(char)
+        keyboard.release(char)
+        time.sleep(0.02)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+    for char in str(batfile):
+        keyboard.press(char)
+        keyboard.release(char)
+        time.sleep(0.02)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+
+
+def launchServer_nocmd():
+    time.sleep(2)
+    for char in str(batfile):
+        keyboard.press(char)
+        keyboard.release(char)
+        time.sleep(0.02)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
+
+
 keyboard = Controller()
 serv_name = input("Server name: ")
 serv_type = input("Server type: Spigot[1], BungeeCord[Coming Soon...]: ")
 dir_name = "MinecraftServerCreator-" + serv_name
 spigot_url = 'https://www.4sync.com/web/directDownload/VijAR3W-/e1puBl8X.d47eb3e8803e083cf05df13d9c5c58c2'
-launch_java = "java -jar " + dir_name + "/" + serv_name + "_start.jar"
+launch_java = "java -jar " + serv_name + "_start.jar"
+cd = "cd " + dir_name
+batfile = "start.bat"
 
 if serv_type == "1":
     os.makedirs(dir_name)
@@ -30,19 +61,35 @@ if serv_type == "1":
           '(https://account.mojang.com/documents/minecraft_eula)')
     eula_accept = input('Do you accept the EULA? y/n: ')
     if eula_accept == 'y':
+        wget.download('https://www.4sync.com/web/directDownload/tdQCpFX3/e1puBl8X.7f89921b393c7bc7f5742b50937436f5',
+                      dir_name)
+
+        e = open(dir_name + "/" + "start.bat", 'w')
+        e.write(launch_java)
+        e.close()
         launchServer()
-        time.sleep(1)
+        time.sleep(10)
         f = open(dir_name + "/" + "eula.txt", 'w')
         f.write('#Minecraft Server Created with MinecraftServerCreator'
-               '\neula=true')
+                '\neula=true')
         f.close()
-        launchServer()
+        time.sleep(1)
+        launchServer_nocmd()
+        time.sleep(30)
+        minecraft_servercommand("stop")
+        plug_yn = input("Do you want to automatically set the server up (plugins, confic, etc.) y/n: ")
+        if plug_yn == "y":
+            print("Downloading the hub")
+            wget.download('https://www.4sync.com/web/directDownload/rAkboNQ3/e1puBl8X.acb53c71680c35ebe506f53a4e598e59',
+                          dir_name)
+            shutil.rmtree(dir_name + "/" + "world/")
+            os.makedirs(dir_name + "/world")
+            patoolib.extract_archive(dir_name + "/" + "world.zip", outdir=dir_name + "/world" )
+            print("Downloading the plugins")
 
-
-
-
-
-
+        else:
+            print("Quitting, enjoy your new server!")
+            quit()
 
     else:
         print('Quitting')
@@ -50,5 +97,5 @@ if serv_type == "1":
 
 
 else:
-       print("MinecraftServerCreator currently only supports Spigot 1.12.2")
-quit()
+    print("MinecraftServerCreator currently only supports Spigot 1.12.2")
+    quit()
