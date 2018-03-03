@@ -5,6 +5,8 @@ from pynput.keyboard import Key, Controller
 import shutil
 import patoolib
 
+def plugin_dl(plugin_link):
+    wget.download(plugin_link, dir_name + "/plugins")
 
 def minecraft_servercommand(command):
     for char in str(command):
@@ -86,6 +88,9 @@ if serv_type == "1":
             os.makedirs(dir_name + "/world")
             patoolib.extract_archive(dir_name + "/" + "world.zip", outdir=dir_name + "/world" )
             print("Downloading the plugins")
+            plugin_dl('https://ci.akpmakes.tech/job/EssentialsX/lastSuccessfulBuild/artifact/Essentials/target/EssentialsX-2.0.1.jar')
+            plugin_dl('')
+
 
         else:
             print("Quitting, enjoy your new server!")
